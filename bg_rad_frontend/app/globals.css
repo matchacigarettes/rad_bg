@@ -3,6 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --transition-time: 500ms;
+  --dropshadow-color: black;
+  --row1-height: 3.3rem;
+  --row3-height: 40%;
   font-size: 15px;
 }
 
@@ -13,10 +17,70 @@
   }
 }
 
-.mainContainer{
-  display: grid;
-  grid-template: 3.3rem auto 40% / auto;
+.siteCont{
   height: 100vh;
+  width: 100vw;
+  position: fixed;
+}
+
+.animatedBg{
+  --bg-accent-col1: blue;
+  --bg-accent-col2: rgb(255, 30, 68);
+  position: absolute;
+  top: 0px;
+  z-index: 0;
+
+  height: 100%;
+  width: 100%;
+
+  display: grid;
+  grid-template: var(--row1-height) auto var(--row3-height) / auto;
+  background-color: black;
+}
+
+@property --bg-grad-col-1{
+  syntax: "<color>";
+  inherits: true;
+  initial-value: blue;
+}
+
+@property --bg-grad-col-2{
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(255, 30, 68); 
+}
+
+.animatedCont{
+  grid-area: 2 / 1 / 2 / 1;
+  background: linear-gradient(45deg, var(--bg-grad-col-1), var(--bg-grad-col-2));
+  animation: changingGrad 10s ease-in-out infinite;
+} 
+
+@keyframes changingGrad{
+  50%{
+    --bg-grad-col-1: purple;
+    --bg-grad-col-2: yellow;
+  }
+  100%{
+    --bg-grad-col-1: blue;
+    --bg-grad-col-2: rgb(255, 30, 68);
+  }
+} 
+
+.mainContainer{
+  position: absolute;
+  z-index: 1;
+ 
+  width: 100%;
+  height: 100%;
+
+  display: grid; 
+  grid-template: var(--row1-height) auto var(--row3-height) / auto;
+  transition: grid-template var(--transition-time);
+}
+
+.mainContainer:has(> .bgRadContainer:hover){
+  grid-template: 3.3rem auto 42% / auto;
 }
 
 .navContainer{
@@ -26,6 +90,7 @@
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
+  filter: drop-shadow(0 0 0.75rem var(--dropshadow-color));
 }
 
 .navFlx1, .navFlx2, .navFlx3{
@@ -70,7 +135,6 @@
   cursor: pointer;
 }
 
-
 .searchBarBtn{ 
   border: 0.15rem solid black;
   background-color: black;
@@ -89,20 +153,17 @@
 }
 
 .locationInfoContainer{
+  grid-area: 2 / 1 / 2 / 1;
+  background-image: url(./map.png);
+  background-repeat: no-repeat; 
+  background-size: cover;
+  background-position: right 35% top 45%;
+  background-attachment: fixed;
+
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-evenly;
   align-items: center;
-}
-
-.locationInfoContainer{
-  grid-area: 2 / 1 / 2 / 1;
-  background-color: #000000;
-
-  background-image: url(./map.jpg);
-  background-repeat: no-repeat;
-  /* background-size: 125%; */
-  background-position: 30% 40%;
 }
  
 .bgRadContainer, .bgRadSubContainer, .locationInfoSubContainer{
@@ -117,16 +178,16 @@
   width: 90%;
   height: 50%;
   max-width: 50rem;
-  background-color: rgba(34, 34, 34, 95%);
+  background-color: rgba(34, 34, 34, 80%);
   color: white;
   text-align: center;
+  filter: drop-shadow(0 0 0.75rem var(--dropshadow-color));
 }
 
 .locationName, .locationSubNat{
   padding: 0px;
   margin: 0px;
-  opacity: 100%;
-} 
+}  
 
 .locationName{
   font-size: 5rem;
@@ -136,13 +197,26 @@
 .locationSubNat{
   font-size: 2rem;
   font-weight: 500;
-  font-style: italic;
+  font-style: italic; 
 }
 
 .bgRadContainer{
   grid-area: 3 / 1 / 3 / 1;
   background-color: rgb(34, 34, 34);
+  filter: drop-shadow(0 0 0.75rem var(--dropshadow-color));
 } 
+
+@property --grad-col-1{
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(44, 44, 44);
+}
+
+@property --grad-col-2{
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(29, 29, 29);  
+}
 
 .bgRadSubContainer{
   width: 90%;
@@ -150,7 +224,40 @@
   border-radius: var(--radius-2xl);
   color: white;
   text-align: center;
-  background: linear-gradient(45deg, black, rgb(44, 44, 44));
+  background: linear-gradient(45deg, var(--grad-col-2), var(--grad-col-1));
+  transition: 
+    --grad-col-1 var(--transition-time), 
+    --grad-col-2 var(--transition-time), 
+    width var(--transition-time), 
+    height var(--transition-time),
+    --rad-figure-size var(--transition-time),
+    --rad-unit-size var(--transition-time),
+    --rad-title-size var(--transition-time)
+  ;
+  filter: drop-shadow(0 0.5rem 0.5rem var(--dropshadow-color));
+  padding: 0.8rem;
+}
+
+.bgRadSubContainer:hover{
+  --grad-col-2: rgb(44, 44, 44);
+  --grad-col-1: rgb(29, 29, 29);
+}
+
+.bgRadSubContainer:has(> .bgRadContainer:hover){
+  width: 92%; 
+  height: 82%;
+}
+
+.radFig:has(> .bgRadContainer:hover){
+  font-size: 5.1rem;
+}
+
+.radContTitle:has(> .bgRadContainer:hover){
+  font-size: 2.6rem;
+}
+
+.radUnit:has(> .bgRadContainer:hover){
+  font-size: 4.6rem;
 }
 
 .radFigCont{
@@ -166,14 +273,87 @@
   font-size: 2.5rem;
   font-weight: 700;
   font-style: italic;
+  transition: font-size var(--transition-time);
 }
 
 .radFig{
   font-weight: 700;
   font-size: 5rem;
+  transition: font-size var(--transition-time);
 }
 
 .radUnit{
   font-weight: 600;
   font-size: 4.5rem;
+  transition: font-size var(--transition-time);
+}
+
+.filterContainer{
+  display: none;
+  position: absolute;
+  height: 100%;
+  width: 30%;
+  z-index: 3;
+  background-color: aqua;
+}
+
+@media(max-width: 800px){
+  .locationInfoContainer{
+    background-position: -15rem -8rem;
+  }
+}
+
+@media(max-height: 1920px) and (max-width: 1080px){
+  .bgRadContainer{
+    justify-content: flex-start;
+  }
+
+  .bgRadSubContainer{
+    margin-top: 2rem;
+    height: 70%;
+  }
+
+  .bgRadSubContainer:hover{
+    margin-top: 2rem;
+    height: 70%;
+  }
+
+  :root{
+    --row1-height: 3.3rem;
+    --row3-height: 55%;
+  }
+
+  .bgRadSubContainer:has(> .bgRadContainer:hover){
+    width: 92%; 
+    height: 75%;
+  }
+
+  .radFig:has(> .bgRadContainer:hover){
+    font-size: 5.1rem;
+  }
+
+  .radContTitle:has(> .bgRadContainer:hover){
+    font-size: 2.6rem;
+  }
+
+  .radUnit:has(> .bgRadContainer:hover){
+    font-size: 4.6rem;
+  }
+
+  .mainContainer:has(> .bgRadContainer:hover){
+    grid-template: 3.3rem auto 57% / auto;
+  }
+
+  .locationName{
+    font-size: 3.5rem;
+    font-weight: 550;
+  }
+
+  .locationSubNat{
+    font-size: 1.5rem;
+  }
+
+  .radContTitle{
+    font-size: 2rem;
+  }
 }

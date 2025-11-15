@@ -1,4 +1,9 @@
+import { Amarante } from "next/font/google";
 import Image from "next/image";
+
+const placeholderLocation = {
+  id: 4, name: "Perth", country: "Australia", subNational: "Wa", bgRad: 13, radUnit: "mSv"
+}
 
 const placeholderApiOutput = [
   {id: 1, name: "Brisbane", country: "Australia", subNational: "Qld", bgRad: 2, radUnit: "mSv"},
@@ -20,7 +25,7 @@ function MenuBtn(){
 function SearchBarBtn(){
   return(
     <div className="navFlx2">
-      <input type="text" name="searchBtn" className="searchBarBtn" placeholder="Search"/>
+      <input type="text" name="searchBtn" className="searchBarBtn" placeholder="Search" disabled/>
     </div>
   );
 }
@@ -68,13 +73,67 @@ function LocationInfoContainer({ locationObj }:{[key:string]:any} ){
   );
 }
 
+function AnimatedBg(){
+  return(
+    <div className="animatedBg">
+      <div className="animatedCont"/>
+    </div>
+  ); 
+}
+
+function SeachResultItem({ itemObj }:{[key:string]:any} ){
+  return(
+    <div className="reusltItemCont">
+      <p>{itemObj.name}</p>
+      <p>{itemObj.subNational}</p>
+    </div>
+  );
+}
+
+function ResultGrid({ searchResultArr }:{[key:string]:any} ){  
+  return(
+    <div className="resultGrid">
+      {searchResultArr.map((item = placeholderLocation) => <SeachResultItem itemObj={item} key={item.id}/>)}
+    </div>
+  );
+}
+
+function FilterLocationBar(){
+  return(
+    <div className="filterSearchBarCont">
+      <input type="text" name="searchBtn" className="filterSearchBar" placeholder="Search"/>
+    </div>
+  );
+}
+
+function FilterReturnBtn(){
+  return(
+    <div className="filterReturnBtnCont">
+      <button className="filterReturnBtn">&lt;</button>
+    </div>
+  );
+}
+
+function FilterContainer(){
+  return(
+    <div className="filterContainer">
+      <FilterLocationBar/>
+      <FilterReturnBtn/>
+      <ResultGrid searchResultArr={placeholderApiOutput}/>
+    </div>
+  );
+}
 
 export default function MainContainer() {
   return(
-    <main className="mainContainer">
-      <NavContainer/>
-      <LocationInfoContainer locationObj={selectedLocation}/>
-      <BgRadContainer locationObj={selectedLocation}/>
-    </main>
+    <div className="siteCont">
+      <FilterContainer/>
+      <main className="mainContainer">
+        <NavContainer/>
+        <LocationInfoContainer locationObj={selectedLocation}/>
+        <BgRadContainer locationObj={selectedLocation}/>
+      </main>
+      <AnimatedBg/>
+    </div>
   ); 
 }
