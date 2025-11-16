@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #171717;
+  --highlight: #222222;
+  --foreground: black;
+  --mainText: white;
   --transition-time: 500ms;
   --dropshadow-color: black;
   --row1-height: 3.3rem;
@@ -85,7 +87,7 @@
 
 .navContainer{
   grid-area: 1 / 1 / 1 / 1;
-  background-color: #171717;
+  background-color: var(--background);
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
@@ -116,7 +118,6 @@
 .infoBtn, .menuBtn{
   border: 0.5rem;
   border-style: none;
-  border-color: #222222;  
   border-radius: var(--radius-2xl);
   margin: 0px;
   width: 1.8rem;
@@ -128,7 +129,8 @@
 
 .infoBtn:hover, .menuBtn:hover{
   transition: all 0.04s ease-in-out;
-  background-color: #222222;
+  background-color: var(--highlight);
+  border-color: var(--highlight);
   border-style: solid;
   width: 2.5rem;
   height: 2.5rem;
@@ -292,9 +294,100 @@
   display: none;
   position: absolute;
   height: 100%;
-  width: 30%;
+  width: 20%;
   z-index: 3;
-  background-color: aqua;
+  background-color: #171717;
+  /* display: grid; */
+  grid-template: 8% 2% 90% / auto; 
+}
+
+.filterSearchBarCont{
+  grid-area: 1 / 1 / 1 / 1;
+  background-color: #171717;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.filterSearchBar{
+  color: white;
+  background-color: black;
+  font-size: 1.3rem;
+  width: 90%;
+  height: 3rem;
+  padding-left: 0.9rem;
+  border-radius: var(--radius-2xl);
+  transition: filter 50ms;
+}
+
+.filterSearchBar:hover{
+  filter: drop-shadow(0 0 0.3rem gray);
+}
+
+.filterSearchBar:focus{
+  border: none;
+  outline: none;
+}
+
+.divLine{
+  grid-area: 2 / 1 / 2 / 1;
+  color: gray;
+  width: 85%;
+  justify-self: center;
+}
+
+.resultGrid{
+  grid-area: 3 / 1 / 3 / 1;
+  background-color: #171717;
+  display: grid;
+  grid-template-columns: auto;
+  grid-auto-rows: 2.9rem;
+  gap: .6rem;
+  justify-items: center;
+}
+
+.reusltItemCont{
+  background-color: #303030;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-flow: row nowrap; 
+  align-items: center;
+  color: white;
+  filter: drop-shadow(0 0 0.3rem var(--dropshadow-color));
+  width: 89%;
+}
+
+.reusltItemCont:hover{
+  background-color: #363636;
+  filter: drop-shadow(0 0 0.3rem rgb(20, 20, 20));
+  cursor: pointer;
+}
+
+.resultName{
+  font-size: 1.3rem;
+  font-weight: 500;
+  width: fit-content;
+  height: fit-content;
+  margin-left: 0.5rem;
+} 
+
+.resultLocation{
+  width: fit-content;
+  font-size: 0.9rem;
+  height: fit-content;
+  vertical-align: bottom;
+  margin-left: 0.3rem;
+}
+
+.blackOutDiv{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+  background-color: black;
+  opacity: 60%;
+  display: none;
 }
 
 @media(max-width: 800px){

@@ -84,8 +84,8 @@ function AnimatedBg(){
 function SeachResultItem({ itemObj }:{[key:string]:any} ){
   return(
     <div className="reusltItemCont">
-      <p>{itemObj.name}</p>
-      <p>{itemObj.subNational}</p>
+      <p className="resultName">{itemObj.name}</p>
+      <p className="resultLocation">{itemObj.subNational + ", "+ itemObj.country}</p>
     </div>
   );
 }
@@ -106,28 +106,33 @@ function FilterLocationBar(){
   );
 }
 
-function FilterReturnBtn(){
-  return(
-    <div className="filterReturnBtnCont">
-      <button className="filterReturnBtn">&lt;</button>
-    </div>
-  );
-}
+// function FilterReturnBtn(){
+//   return(
+//     <div className="filterReturnBtnCont">
+//       <button className="filterReturnBtn">&lt;</button>
+//     </div>
+//   );
+// }
 
 function FilterContainer(){
   return(
     <div className="filterContainer">
       <FilterLocationBar/>
-      <FilterReturnBtn/>
+      <hr className="divLine"/>
       <ResultGrid searchResultArr={placeholderApiOutput}/>
     </div>
   );
+}
+
+function BlackOutDiv(){
+  return <div className="blackOutDiv"/>
 }
 
 export default function MainContainer() {
   return(
     <div className="siteCont">
       <FilterContainer/>
+      <BlackOutDiv/>
       <main className="mainContainer">
         <NavContainer/>
         <LocationInfoContainer locationObj={selectedLocation}/>
