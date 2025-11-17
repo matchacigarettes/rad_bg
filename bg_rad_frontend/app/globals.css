@@ -1,84 +1,71 @@
 @import "tailwindcss";
 
 :root {
-  --background: #171717;
-  --highlight: #222222;
+  /* Color Vars */
+  --background: rgb(34, 34, 34);
   --foreground: black;
+  --highlight: rgb(49, 49, 49);
   --mainText: white;
-  --transition-time: 500ms;
+
+  --locationBgColor: rgba(34, 34, 34, 80%);
+
+  --filterHighlight: gray;
+  --filterItemBg: #303030;
+  --filterItemHighlight: #3d3d3d;
+
   --dropshadow-color: black;
+  --bg-dot-col: black;
+
+  --bg-accent-col1: blue;
+  --bg-accent-col2: rgb(255, 30, 68);
+
+  /* Spacing & Misc. Vars */
   --row1-height: 3.3rem;
   --row3-height: 40%;
+
+  --row1-min-height: 3.3rem;
+  --row2-min-height: 23rem;
+  --row3-min-height: 24rem;
+
+  --total-min-height: 50.3rem;
+
+  --transition-time-slow: 500ms;
+  --transition-time-quick: 50ms;
+
+  /* rem */
   font-size: 15px;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: rgb(34, 34, 34);
+    --highlight: rgb(49, 49, 49);
+    --foreground: black;
+    --mainText: white;
+    --locationBgColor: rgba(34, 34, 34, 80%);
+
+    --filterHighlight: gray;
+    --filterItemBg: #303030;
+    --filterItemHighlight: #3d3d3d;
   }
-}
+} */
 
 .siteCont{
-  height: 100vh;
+  height: max-content;
   width: 100vw;
-  position: fixed;
 }
-
-.animatedBg{
-  --bg-accent-col1: blue;
-  --bg-accent-col2: rgb(255, 30, 68);
-  position: absolute;
-  top: 0px;
-  z-index: 0;
-
-  height: 100%;
-  width: 100%;
-
-  display: grid;
-  grid-template: var(--row1-height) auto var(--row3-height) / auto;
-  background-color: black;
-}
-
-@property --bg-grad-col-1{
-  syntax: "<color>";
-  inherits: true;
-  initial-value: blue;
-}
-
-@property --bg-grad-col-2{
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(255, 30, 68); 
-}
-
-.animatedCont{
-  grid-area: 2 / 1 / 2 / 1;
-  background: linear-gradient(45deg, var(--bg-grad-col-1), var(--bg-grad-col-2));
-  animation: changingGrad 10s ease-in-out infinite;
-} 
-
-@keyframes changingGrad{
-  50%{
-    --bg-grad-col-1: purple;
-    --bg-grad-col-2: yellow;
-  }
-  100%{
-    --bg-grad-col-1: blue;
-    --bg-grad-col-2: rgb(255, 30, 68);
-  }
-} 
 
 .mainContainer{
+  display: grid;
+  grid-template: var(--row1-height) auto var(--row3-height) / auto;
+
   position: absolute;
-  z-index: 1;
+  z-index: 0;
  
   width: 100%;
   height: 100%;
 
-  display: grid; 
-  grid-template: var(--row1-height) auto var(--row3-height) / auto;
-  transition: grid-template var(--transition-time);
+  transition: grid-template var(--transition-time-slow);
 }
 
 .mainContainer:has(> .bgRadContainer:hover){
@@ -87,19 +74,25 @@
 
 .navContainer{
   grid-area: 1 / 1 / 1 / 1;
+
+  min-height: var(--row1-min-height);
+
   background-color: var(--background);
+
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
+
   filter: drop-shadow(0 0 0.75rem var(--dropshadow-color));
 }
 
 .navFlx1, .navFlx2, .navFlx3{
   display: flex;
+  align-items: center;
+
   margin: 0px;
   height: 100%;
-  align-items: center;
 }
 
 .navFlx1, .navFlx3{
@@ -117,33 +110,23 @@
 
 .infoBtn, .menuBtn{
   border: 0.5rem;
-  border-style: none;
   border-radius: var(--radius-2xl);
+  border-style: solid;
+  border-color: var(--background);
+  
+
   margin: 0px;
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 2.5rem;
+  height: 2.5rem;
+
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-}
 
-.infoBtn:hover, .menuBtn:hover{
-  transition: all 0.04s ease-in-out;
-  background-color: var(--highlight);
-  border-color: var(--highlight);
-  border-style: solid;
-  width: 2.5rem;
-  height: 2.5rem;
-  cursor: pointer;
-}
-
-.searchBarBtn{ 
-  border: 0.15rem solid black;
-  background-color: black;
-  border-radius: var(--radius-xl);
-  color: white;
-  height: 2rem;
-  padding-left: 0.5rem;
+  transition: 
+    background-color var(--transition-time-quick),
+    border-color var(--transition-time-quick)
+  ;
 }
 
 .infoBtn{
@@ -154,14 +137,73 @@
   background-image: url(./hb_icon_black.png);
 }
 
+.infoBtn:hover, .menuBtn:hover{
+  cursor: pointer;
+  background-color: var(--highlight);
+  border-color: var(--highlight);
+}
+
+.searchBarBtn{ 
+  border: 0.15rem solid var(--foreground);
+  border-radius: var(--radius-xl);
+
+  background-color: var(--foreground);
+  color: var(--mainText);
+  
+  height: 2rem;
+  padding-left: 0.5rem;
+
+  transition: filter 50ms;
+}
+
+.searchBarBtn:hover{
+  cursor: text;
+  filter: drop-shadow(0 0 0.3rem var(--filterHighlight));
+}
+
+.searchBarBtn:focus{
+  outline: none;
+}
+
+.animatedGradient{
+  grid-area: 2 / 1 / 2 / 1;
+  min-height: var(--row2-min-height);
+
+  background: linear-gradient(45deg, var(--bg-grad-col-1), var(--bg-grad-col-2));
+  animation: changingGrad 10s ease-in-out infinite;
+}
+
+@property --bg-grad-col-1{
+  syntax: "<color>";
+  inherits: true;
+  initial-value: blue;
+}
+
+@property --bg-grad-col-2{
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(255, 30, 68); 
+}
+
+@keyframes changingGrad{
+  50%{
+    --bg-grad-col-1: purple;
+    --bg-grad-col-2: yellow;
+  }
+  100%{
+    --bg-grad-col-1: blue;
+    --bg-grad-col-2: rgb(255, 30, 68);
+  }
+} 
+
 .locationInfoContainer{
   grid-area: 2 / 1 / 2 / 1;
-  background-image: url(./map.png);
-  background-repeat: no-repeat; 
-  background-size: cover;
-  background-position: right 35% top 45%;
-  background-attachment: fixed;
+  min-height: var(--row2-min-height);
+  z-index: 1;
 
+  background-image: radial-gradient(circle at center, var(--bg-dot-col) 1px, transparent 1px);
+  background-size: 20px 20px;
+  
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-evenly;
@@ -177,19 +219,18 @@
 
 .locationInfoSubContainer{
   border-radius: var(--radius-3xl);
+
+  color: var(--mainText);
+  background-color: var(--locationBgColor);
+
   width: 90%;
   height: 50%;
   max-width: 50rem;
-  background-color: rgba(34, 34, 34, 80%);
-  color: white;
+
   text-align: center;
+  
   filter: drop-shadow(0 0 0.75rem var(--dropshadow-color));
 }
-
-.locationName, .locationSubNat{
-  padding: 0px;
-  margin: 0px;
-}  
 
 .locationName{
   font-size: 5rem;
@@ -204,9 +245,41 @@
 
 .bgRadContainer{
   grid-area: 3 / 1 / 3 / 1;
-  background-color: rgb(34, 34, 34);
+  min-height: var(--row3-min-height);
+
+  background-color: var(--background);
+  
   filter: drop-shadow(0 0 0.75rem var(--dropshadow-color));
 } 
+
+.bgRadSubContainer{
+  filter: drop-shadow(0 0.5rem 0.5rem var(--dropshadow-color));
+  
+  width: 90%;
+  height: 80%;
+  padding: 0.8rem;
+  
+  color: var(--mainText);
+  text-align: center;
+
+  background: linear-gradient(45deg, var(--grad-col-2), var(--grad-col-1));
+  border-radius: var(--radius-2xl);
+
+  transition: 
+    --grad-col-1 var(--transition-time-slow), 
+    --grad-col-2 var(--transition-time-slow), 
+    width var(--transition-time-slow), 
+    height var(--transition-time-slow),
+    --rad-figure-size var(--transition-time-slow),
+    --rad-unit-size var(--transition-time-slow),
+    --rad-title-size var(--transition-time-slow)
+  ;
+}
+
+.bgRadSubContainer:hover{
+  --grad-col-2: rgb(44, 44, 44);
+  --grad-col-1: rgb(29, 29, 29);
+}
 
 @property --grad-col-1{
   syntax: "<color>";
@@ -218,31 +291,6 @@
   syntax: "<color>";
   inherits: true;
   initial-value: rgb(29, 29, 29);  
-}
-
-.bgRadSubContainer{
-  width: 90%;
-  height: 80%;
-  border-radius: var(--radius-2xl);
-  color: white;
-  text-align: center;
-  background: linear-gradient(45deg, var(--grad-col-2), var(--grad-col-1));
-  transition: 
-    --grad-col-1 var(--transition-time), 
-    --grad-col-2 var(--transition-time), 
-    width var(--transition-time), 
-    height var(--transition-time),
-    --rad-figure-size var(--transition-time),
-    --rad-unit-size var(--transition-time),
-    --rad-title-size var(--transition-time)
-  ;
-  filter: drop-shadow(0 0.5rem 0.5rem var(--dropshadow-color));
-  padding: 0.8rem;
-}
-
-.bgRadSubContainer:hover{
-  --grad-col-2: rgb(44, 44, 44);
-  --grad-col-1: rgb(29, 29, 29);
 }
 
 .bgRadSubContainer:has(> .bgRadContainer:hover){
@@ -269,60 +317,67 @@
 
 .radContTitle, .radFig, .radUnit{
   font-style: italic;
+  transition: font-size var(--transition-time-slow);
 }
 
 .radContTitle{
   font-size: 2.5rem;
   font-weight: 700;
-  font-style: italic;
-  transition: font-size var(--transition-time);
 }
 
 .radFig{
   font-weight: 700;
   font-size: 5rem;
-  transition: font-size var(--transition-time);
 }
 
 .radUnit{
   font-weight: 600;
   font-size: 4.5rem;
-  transition: font-size var(--transition-time);
 }
 
 .filterContainer{
-  display: none;
+  display: grid;
+  grid-template: 8% 2% 90% / auto; 
+  z-index: 3;
   position: absolute;
+
   height: 100%;
   width: 20%;
-  z-index: 3;
-  background-color: #171717;
-  /* display: grid; */
-  grid-template: 8% 2% 90% / auto; 
+
+  background-color: var(--background);
+
+  filter: drop-shadow(0 0 0.3rem var(--dropshadow-color));
+  transition: translate var(--transition-time-slow) ease-in-out;
 }
 
 .filterSearchBarCont{
   grid-area: 1 / 1 / 1 / 1;
-  background-color: #171717;
+  
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
+
+  background-color: var(--background);
 }
 
 .filterSearchBar{
-  color: white;
-  background-color: black;
+  border-radius: var(--radius-2xl);
+  
+  color: var(--mainText);
+  background-color: var(--foreground);
+
   font-size: 1.3rem;
+
   width: 90%;
   height: 3rem;
   padding-left: 0.9rem;
-  border-radius: var(--radius-2xl);
+
   transition: filter 50ms;
 }
 
 .filterSearchBar:hover{
-  filter: drop-shadow(0 0 0.3rem gray);
+  filter: drop-shadow(0 0 0.3rem var(--filterHighlight));
 }
 
 .filterSearchBar:focus{
@@ -332,41 +387,48 @@
 
 .divLine{
   grid-area: 2 / 1 / 2 / 1;
-  color: gray;
-  width: 85%;
   justify-self: center;
+  width: 85%;
+  color: var(--filterHighlight);
 }
 
 .resultGrid{
   grid-area: 3 / 1 / 3 / 1;
-  background-color: #171717;
+  
   display: grid;
   grid-template-columns: auto;
   grid-auto-rows: 2.9rem;
   gap: .6rem;
   justify-items: center;
+
+  background-color: var(--background);
 }
 
 .reusltItemCont{
-  background-color: #303030;
-  border-radius: var(--radius-lg);
   display: flex;
   flex-flow: row nowrap; 
   align-items: center;
-  color: white;
-  filter: drop-shadow(0 0 0.3rem var(--dropshadow-color));
+
   width: 89%;
+
+  background-color: var(--filterItemBg);
+  color: var(--mainText);
+  
+  border-radius: var(--radius-lg);
+  
+  filter: drop-shadow(0 0 0.3rem var(--dropshadow-color));
+  transition: background-color 25ms ease-in-out;
 }
 
 .reusltItemCont:hover{
-  background-color: #363636;
-  filter: drop-shadow(0 0 0.3rem rgb(20, 20, 20));
+  background-color: var(--filterItemHighlight);
   cursor: pointer;
 }
 
 .resultName{
   font-size: 1.3rem;
   font-weight: 500;
+
   width: fit-content;
   height: fit-content;
   margin-left: 0.5rem;
@@ -374,21 +436,27 @@
 
 .resultLocation{
   width: fit-content;
-  font-size: 0.9rem;
   height: fit-content;
-  vertical-align: bottom;
   margin-left: 0.3rem;
+
+  font-size: 0.9rem;
+  vertical-align: bottom;
 }
 
 .blackOutDiv{
   position: absolute;
+  z-index: 2;
+
   height: 100%;
   width: 100%;
-  z-index: 2;
+  
   background-color: black;
-  opacity: 60%;
-  display: none;
+
+  transition: 
+    opacity var(--transition-time-slow) ease-in-out
+  ;
 }
+
 
 @media(max-width: 800px){
   .locationInfoContainer{
@@ -397,23 +465,14 @@
 }
 
 @media(max-height: 1920px) and (max-width: 1080px){
-  .bgRadContainer{
-    justify-content: flex-start;
-  }
-
-  .bgRadSubContainer{
-    margin-top: 2rem;
-    height: 70%;
-  }
-
-  .bgRadSubContainer:hover{
-    margin-top: 2rem;
-    height: 70%;
-  }
-
   :root{
     --row1-height: 3.3rem;
     --row3-height: 55%;
+    --row1-min-height: 3.3rem;
+    --row2-min-height: 18rem;
+    --row3-min-height: 24rem;
+
+    --total-min-height: 60rem;
   }
 
   .bgRadSubContainer:has(> .bgRadContainer:hover){
@@ -448,5 +507,9 @@
 
   .radContTitle{
     font-size: 2rem;
+  }
+
+  .filterContainer{
+    width: 80%;
   }
 }

@@ -1,6 +1,6 @@
-import { Amarante } from "next/font/google";
-import Image from "next/image";
-
+"use client";
+import { useState } from "react";
+ 
 const placeholderLocation = {
   id: 4, name: "Perth", country: "Australia", subNational: "Wa", bgRad: 13, radUnit: "mSv"
 }
@@ -12,20 +12,18 @@ const placeholderApiOutput = [
   {id: 4, name: "Perth", country: "Australia", subNational: "Wa", bgRad: 13, radUnit: "mSv"},
 ];
 
-let selectedLocation = placeholderApiOutput[0]; 
-
-function MenuBtn(){
+function MenuBtn({ setFilterShown }:{[key:string]:any}){
   return(
     <div className="navFlx1">
-      <button className="menuBtn"/>
+      <button className="menuBtn" onClick={e => setFilterShown(1)}/>
     </div>
   );
 }
 
-function SearchBarBtn(){
+function SearchBarBtn({ setFilterShown }:{[key:string]:any}){
   return(
     <div className="navFlx2">
-      <input type="text" name="searchBtn" className="searchBarBtn" placeholder="Search" disabled/>
+      <input type="text" className="searchBarBtn" placeholder="Search" readOnly onClick={e => setFilterShown(1)}/>
     </div>
   );
 }
@@ -38,17 +36,25 @@ function InfoBtn(){
   );
 }
 
-function NavContainer(){ 
+function NavContainer({ setFilterShown }:{[key:string]:any}){ 
   return(
     <nav className="navContainer">
-      <MenuBtn/>
-      <SearchBarBtn/>
+      <MenuBtn setFilterShown={setFilterShown}/>
+      <SearchBarBtn setFilterShown={setFilterShown}/>
       <InfoBtn/>
     </nav>
   );
 }
 
+function selectLocationFromId(id:number){
+  return (id >= 0)
+    ? placeholderApiOutput[placeholderApiOutput.findIndex(item => item.id == id)]
+    : placeholderLocation
+  ;
+}
+
 function BgRadContainer({ locationObj }:{[key:string]:any} ){
+
   return (
     <div className="bgRadContainer">
       <div className="bgRadSubContainer">
@@ -63,6 +69,7 @@ function BgRadContainer({ locationObj }:{[key:string]:any} ){
 }
 
 function LocationInfoContainer({ locationObj }:{[key:string]:any} ){
+
   return(
     <div className="locationInfoContainer">
       <div className="locationInfoSubContainer">
@@ -73,72 +80,96 @@ function LocationInfoContainer({ locationObj }:{[key:string]:any} ){
   );
 }
 
-function AnimatedBg(){
+function SeachResultItem({ itemObj, onItemClick, setFilterShown }:{[key:string]:any} ){
   return(
-    <div className="animatedBg">
-      <div className="animatedCont"/>
-    </div>
-  ); 
-}
-
-function SeachResultItem({ itemObj }:{[key:string]:any} ){
-  return(
-    <div className="reusltItemCont">
+    <div className="reusltItemCont" onClick={(element) => {onItemClick(itemObj.id); setFilterShown(0)}}>
       <p className="resultName">{itemObj.name}</p>
       <p className="resultLocation">{itemObj.subNational + ", "+ itemObj.country}</p>
     </div>
   );
 }
 
-function ResultGrid({ searchResultArr }:{[key:string]:any} ){  
+function ResultGrid({ filterText, onItemClick, setFilterShown }:{[key:string]:any}){  
+  let searchArr = new Array(0);
+  filterText = filterText.trim().toLowerCase();
+
+
+  if(filterText = ''){
+    searchArr = placeholderApiOutput;
+  } else {
+    searchArr = placeholderApiOutput.filter(item => 
+      item.name.toLowerCase().includes(filterText) 
+      || item.country.toLowerCase().includes(filterText)
+      || item.subNational.toLowerCase().includes(filterText)
+    );
+  }
+  
   return(
     <div className="resultGrid">
-      {searchResultArr.map((item = placeholderLocation) => <SeachResultItem itemObj={item} key={item.id}/>)}
+      {searchArr.map((item = placeholderLocation) => (
+        <SeachResultItem 
+          itemObj={item} 
+          key={item.id} 
+          onItemClick={onItemClick} 
+          setFilterShown={setFilterShown}
+        />
+      ))}
     </div>
   );
 }
 
-function FilterLocationBar(){
+function FilterLocationBar({ filterText, onTextChange }:{[key:string]:any} ){
   return(
     <div className="filterSearchBarCont">
-      <input type="text" name="searchBtn" className="filterSearchBar" placeholder="Search"/>
+      <input 
+        type="text" 
+        className="filterSearchBar" 
+        placeholder="Search"
+        value={filterText}
+        onChange={(element) => onTextChange(element.target.value)}
+      />
     </div>
   );
 }
 
-// function FilterReturnBtn(){
-//   return(
-//     <div className="filterReturnBtnCont">
-//       <button className="filterReturnBtn">&lt;</button>
-//     </div>
-//   );
-// }
+function FilterContainer({ onItemClick, filterShown, setFilterShown }:{[key:string]:any}){
+  let [ filterText, setFilterText ] = useState('');
+  let elementStyle = (filterShown)? {translate: "0px 0px"} : {translate: "-100% 0px"};
 
-function FilterContainer(){
   return(
-    <div className="filterContainer">
-      <FilterLocationBar/>
+    <div className="filterContainer" style={elementStyle}>
+      <FilterLocationBar filterText={filterText} onTextChange={setFilterText} />
       <hr className="divLine"/>
-      <ResultGrid searchResultArr={placeholderApiOutput}/>
+      <ResultGrid filterText={filterText} onItemClick={onItemClick} setFilterShown={setFilterShown}/>
     </div>
   );
 }
 
-function BlackOutDiv(){
-  return <div className="blackOutDiv"/>
+function BlackOutDiv({ filterShown, setFilterShown}:{[key:string]:any}){  
+  let elemenetStyle = (filterShown)? {opacity: "60%", zIndex:"2"} : {opacity: "0%", zIndex:"0"}
+  return <div className="blackOutDiv" style={elemenetStyle} onClick={element => setFilterShown(0)}/>
+}
+
+function AnimatedGradient(){
+  return <div className="animatedGradient"/>
 }
 
 export default function MainContainer() {
+  let [ selectionId, setSelectionId ] = useState(-1);
+  let [ filterShown, setFilterShown ] = useState(1);
+  
+  let selectedLocation = selectLocationFromId(selectionId);
+
   return(
     <div className="siteCont">
-      <FilterContainer/>
-      <BlackOutDiv/>
       <main className="mainContainer">
-        <NavContainer/>
+        <FilterContainer onItemClick={setSelectionId} filterShown={filterShown} setFilterShown={setFilterShown}/>
+        <BlackOutDiv filterShown={filterShown} setFilterShown={setFilterShown}/>
+        <NavContainer setFilterShown={setFilterShown}/>
         <LocationInfoContainer locationObj={selectedLocation}/>
+        <AnimatedGradient/>
         <BgRadContainer locationObj={selectedLocation}/>
       </main>
-      <AnimatedBg/>
     </div>
   ); 
 }
