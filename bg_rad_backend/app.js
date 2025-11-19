@@ -1,8 +1,12 @@
 const express = require("express");
-const radDataRoute = require("./routes/radDataRoute");
+const cors = require("cors");
+
+const radDataRoute = require("./routes/radDataRoute.js");
 
 const app = express();
-const port = 3000;
+const port = 8000;
+
+app.use(cors());
 
 app.use("/radData/", radDataRoute);
 

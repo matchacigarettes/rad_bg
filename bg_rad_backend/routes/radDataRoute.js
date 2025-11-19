@@ -7,13 +7,14 @@ const router = express.Router();
 router.get("/get/byID/:id", async (req, res) => {
     const locationId = req.params.id;
     res.set('Content-Type', 'application/json');
+    res.set('Cache-Control', 'no-cache')
     
     await dbFunctions.getLocationByID(locationId)
         .then(result => {
             if(result.hasOwnProperty("error")){
                 res.status(404).json(result);
             }else{
-                res.json(result);
+                res.status(200).json(result);
             }
         })
         .catch(err => {

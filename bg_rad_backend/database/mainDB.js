@@ -23,18 +23,19 @@ const client = new MongoClient(uri, {
  */
 async function dbItemFind(query){
   try {
-      await client.connect();
-      // console.log("connected to DB");
-      const dbCol = await client.db(dbName).collection(colName);
+    await client.connect();
+    const dbCol = await client.db(dbName).collection(colName);
 
-      const cursor = await dbCol.find(query);
+    const cursor = await dbCol.find(query);
+    return await cursor.toArray();
 
-      return await cursor.toArray();
-
-  } finally {
-      await client.close();
-      // console.log("connection closed");
+  } catch(err){
+    console.error(err);
   }
+}
+
+async function closeDbConnection(){
+  await client.close();
 }
 
 /**
@@ -68,8 +69,8 @@ const selectItemById = async (id) => {
 
 module.exports = {
   selectItemById,
-  selectItemsBySubString
+  selectItemsBySubString,
+  closeDbConnection
 };
 
-// selectItemsBySubString("bris").then(result => console.log(result));
 

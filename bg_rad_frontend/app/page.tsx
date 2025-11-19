@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
+import { DataApi } from "./data_api";
+import { LocationRecord } from "./locationRecord";
  
+
 const placeholderLocation = {
   id: 4, name: "Perth", country: "Australia", subNational: "Wa", bgRad: 13, radUnit: "mSv"
 }
@@ -11,6 +14,9 @@ const placeholderApiOutput = [
   {id: 3, name: "Sydney", country: "Australia", subNational: "Nsw", bgRad: 10, radUnit: "mSv"},
   {id: 4, name: "Perth", country: "Australia", subNational: "Wa", bgRad: 13, radUnit: "mSv"},
 ];
+
+
+// --- React Componenets ---
 
 function MenuBtn({ setFilterShown }:{[key:string]:any}){
   return(
@@ -156,9 +162,11 @@ function AnimatedGradient(){
 
 export default function MainContainer() {
   let [ selectionId, setSelectionId ] = useState(-1);
-  let [ filterShown, setFilterShown ] = useState(1);
+  let [ filterShown, setFilterShown ] = useState(0);
   
-  let selectedLocation = selectLocationFromId(selectionId);
+  let selectedLocation = selectLocationFromId(selectionId); 
+
+  // DataApi.requestRecordsByFilter('aus').then(result => console.log(result.selectedLocations.length));
 
   return(
     <div className="siteCont">
