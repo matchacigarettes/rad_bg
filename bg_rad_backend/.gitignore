@@ -6,4 +6,5 @@
 #api keys
 *.env
 
+/tools/dev_test.js
 

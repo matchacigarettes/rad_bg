@@ -8,7 +8,7 @@ app.use("/radData/", radDataRoute);
 
 app.use((err, req, res, next) =>{
     console.error(err.stack);
-    res.status(500).send("it brokey");
+    res.status(500).json({error:'an error occured'});
 })
 
 app.get("/", (req, res) => {

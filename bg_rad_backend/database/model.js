@@ -1,35 +1,55 @@
 // handles logic and database functions based on input provided by controller, sends result to controller
-
+const dbMethods = require("./mainDB.js");
 const Location = require("../tools/location.js")
 
-const mockDB = [new Location(1, "Brisbane", "Australia", "Queensland", 2, "mSv"),
-  new Location(2, "Melbourne", "Australia", "Victoria", 4, "mSv"),
-  new Location(3, "Perth", "Australia", "Western Australia", 6, "mSv"),
-  new Location(4, "Sydney", "Australia", "New South Wales", 10, "mSv")
-];
 
 /**
  * Finds item in DB with id specified
- * @param {number} id id of return item
- * @returns {Location} location object representing item
+ * @param {string} id id of return item
+ * @returns {Object} location object representing item
  */
-const getLocationByID = (id) => mockDB.find(item => item.id == id);
+const getLocationByID = async (id) => {
+  return await dbMethods.selectItemById(id).then(result =>{
+    
+    if(result.length > 0){
+      result = result[0];
+      
+      return new Location(
+        result._id.toString(), 
+        result.name, 
+        result.country, 
+        result.subNational,
+        result.radFig,
+        result.radUnit
+      );
+    } else{
+      return {error: `No object with id:'${id}' found`};
+    }
+  }).catch(console.error);
+};
 
 /**
  * Finds items in DB containing substring specified, returning a max of 8 items
  * @param {string} subString items returned contain this substring
  * @returns {Array} Array of Location objects
  */
-const getLocationsBySubString = (subString) => {
+const getLocationsBySubString = async (subString) => {
   subString = subString.toLocaleLowerCase();
-  return mockDB.filter(item => (
-    item.name.toLocaleLowerCase().includes(subString)
-    || item.country.toLocaleLowerCase().includes(subString)
-    || item.subNational.toLocaleLowerCase().includes(subString)
-  )); 
+  
+  return await dbMethods.selectItemsBySubString(subString).then(result => {
+    return result.map(item => new Location(
+      item._id.toString(),
+      item.name,
+      item.country,
+      item.subNational,
+      item.radFig,
+      item.radUnit
+    ));
+  }).catch(console.error);
 }
 
 module.exports = {
   getLocationByID,
   getLocationsBySubString
 };
+
