@@ -1,9 +1,13 @@
+import { LocationRecord } from "./locationRecord";
+
 export class DataApi{
   private constructor(){
     console.log('This class is non-instantiable.')
   }
 
-  private static url = "http://localhost:8000/radData/";
+  static apiRequestResult = new Array();
+
+  private static url = "http://192.168.1.109:8000/radData/";
   private static defaultID = '691c307cab488430c602f5b7';
   
   private static byIdEndpoint = "get/byID/";
@@ -32,14 +36,32 @@ export class DataApi{
   }
 
   static requestRecordById = async (id:string) => {
-    return await this.apiFetch(this.url, this.byIdEndpoint, id);
+    const result = await this.apiFetch(this.url, this.byIdEndpoint, id);
+    
+    if(result === undefined){
+      this.apiRequestResult = [new LocationRecord("-1", "Error", "not found", "record", 0, "")];
+    } else{
+      this.apiRequestResult = (result.hasOwnProperty("id")) 
+        ? [result] 
+        : [new LocationRecord("-1", "Error", "not found", "record", 0, "")]
+      ;
+    }
   }
 
   static requestDefaultRecord = async () => {
-    return await this.requestRecordById(this.defaultID);
+    await this.requestRecordById(this.defaultID);
   }
 
   static requestRecordsByFilter = async (filter:string) => {
-    return await this.apiFetch(this.url, this.byFilterEndpoint, filter);
+    const result = await this.apiFetch(this.url, this.byFilterEndpoint, filter);
+    
+    if(result === undefined){
+      this.apiRequestResult = new Array();
+    } else {
+      this.apiRequestResult = (result.hasOwnProperty("selectedLocations")) 
+        ? result.selectedLocations 
+        : new Array()
+      ;
+    }
   }
 }
