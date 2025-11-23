@@ -1,14 +1,14 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { DataApi } from "./data_api";
-import { LocationRecord } from "./locationRecord";
 import { useEffect } from "react";
-
+import dynamic from "next/dynamic";
 
 // --- React Componenets ---
 
 export default function MainContainer() {
-  let [ selectedRecord, setSelectedRecord ] = useState(new LocationRecord("-1", "Loading", "unknown", "unknown", 0, ""));
+  
+  let [ selectedRecord, setSelectedRecord ] = useState(DataApi.loadingLocationObj);
   let [ filterShown, setFilterShown ] = useState(0);
 
   useEffect(() => {DataApi.requestDefaultRecord().then(() => setSelectedRecord(DataApi.apiRequestResult[0]))}, []);
@@ -48,7 +48,8 @@ function FilterLocationBar({ filterText, setFilterText}:{[key:string]:any} ){
     <div className="filterSearchBarCont">
       <input 
         type="text" 
-        className="filterSearchBar" 
+        className="filterSearchBar"
+        name="input1"
         placeholder="Search"
         value={filterText}
         onChange={async (element) => {
@@ -125,7 +126,7 @@ function MenuBtn({ setFilterShown }:{[key:string]:any}){
 function SearchBarBtn({ setFilterShown }:{[key:string]:any}){
   return(
     <div className="navFlx2">
-      <input type="text" className="searchBarBtn" placeholder="Search" readOnly onClick={e => setFilterShown(1)}/>
+      <input name="input2" type="text" className="searchBarBtn" placeholder="Search" readOnly onClick={e => setFilterShown(1)}/>
     </div>
   );
 }
@@ -163,11 +164,18 @@ function BgRadContainer({ selectedRecord }:{[key:string]:any} ){
   );
 }
 
-// function MapLeaflet(){
-//   return <div id="map"></div>
-// }
-
 function LocationInfoContainer({ selectedRecord }:{[key:string]:any} ){
+  const createMap = (latitude:number, longitude:number) => {
+    const MapLeaflet = useMemo(() => dynamic(
+      () => import('./map_script'),
+      { 
+        loading: () => <div className="mapLoading">map loading...</div>,
+        ssr: false
+      }
+    ), [])
+
+    return <MapLeaflet pos={[latitude, longitude]} scale={12}/>
+  }
 
   return(
     <div className="locationInfoContainer">
@@ -175,7 +183,7 @@ function LocationInfoContainer({ selectedRecord }:{[key:string]:any} ){
         <p className="locationName">{(selectedRecord.name.length > 16) ? `${selectedRecord.name.substring(0, 15)}...` : selectedRecord.name}</p>
         <p className="locationSubNat">{selectedRecord.subNational + ", " + selectedRecord.country}</p>
       </div>
-      {/* <MapLeaflet/> */}
+      {createMap(selectedRecord.latitude, selectedRecord.longitude)}
     </div>
   );
 }

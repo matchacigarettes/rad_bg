@@ -11,7 +11,7 @@ Used to request/transmit data spcifiying the background radiation of various loc
 
 
 ## _api_url_/radData/get/byFilter/:filter
-Used to select multiple records from the database where the filter specified is a sub-string contained in the records `name`, `subNational`, or `country` feild. Retrives a max of **_X_** database items.
+Used to select multiple records from the database where the filter specified is a sub-string contained in the records `name`, `subNational`, or `country` feild. Retrives a max of **_10_** database items.
 - Valid HTTP Commands: **_Get_**
 
 #### :filter
@@ -27,14 +27,16 @@ If the call was valid, the JSON response object will contain a property named `s
 ```
 {
     "selectedLocations": [
-        {
-            "id": "691c2f65ab488430c602f5b4",
-            "name": "Brisbane",
+        {   
+            "id": "692108cc3ddc29e8f6004b53",
+            "name": "Sydney",
             "country": "Australia",
-            "subNational": "Queensland",
-            "bgRad": 2,
-            "radUnit": "mSv"
-        }
+            "subNational": "New South Wales",
+            "bgRad": 300,
+            "radUnit": "uSv",
+            "latitude": -33.8687530844104,
+            "longitude": 151.196779661934
+        }, ....
     ]
 }
 ```
@@ -58,12 +60,14 @@ _Valid Call_ <br/>
 If a valid call is made to the endpoint, the JSON object will contain all feilds of the record the ID corresponds to, with the keys for each feild being as follows:
 ```
 {
-    "id": "691c2f65ab488430c602f5b4",
-    "name": "Brisbane",
-    "country": "Australia",
-    "subNational": "Queensland",
-    "bgRad": 2,
-    "radUnit": "mSv"
+  "id": "692108cc3ddc29e8f6004b53",
+  "name": "Sydney",
+  "country": "Australia",
+  "subNational": "New South Wales",
+  "bgRad": 300,
+  "radUnit": "uSv",
+  "latitude": -33.8687530844104,
+  "longitude": 151.196779661934
 }
 ```
 

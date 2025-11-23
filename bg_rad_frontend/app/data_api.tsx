@@ -7,11 +7,17 @@ export class DataApi{
 
   static apiRequestResult = new Array();
 
+  private static defLat = -25.034912926102326;
+  private static deflong = 134.27791178447652;
+
   private static url = "http://192.168.1.109:8000/radData/";
   private static defaultID = '692108cc3ddc29e8f6004b54';
   
   private static byIdEndpoint = "get/byID/";
   private static byFilterEndpoint = "get/byFilter/";
+
+  static loadingLocationObj = new LocationRecord("-1", "Loading", "unknown", "unknown", 0, "", this.defLat, this.deflong);
+  private static errorLocationObj = new LocationRecord("-1", "Error", "not found", "record", 0, "", this.defLat, this.deflong);
 
   /**
    * Performs fetch request for resource specified
@@ -39,11 +45,11 @@ export class DataApi{
     const result = await this.apiFetch(this.url, this.byIdEndpoint, id);
     
     if(result === undefined){
-      this.apiRequestResult = [new LocationRecord("-1", "Error", "not found", "record", 0, "")];
+      this.apiRequestResult = [this.errorLocationObj];
     } else{
       this.apiRequestResult = (result.hasOwnProperty("id")) 
         ? [result] 
-        : [new LocationRecord("-1", "Error", "not found", "record", 0, "")]
+        : [this.errorLocationObj]
       ;
     }
   }

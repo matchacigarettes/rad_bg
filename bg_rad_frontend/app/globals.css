@@ -16,8 +16,20 @@
   --dropshadow-color: black;
   --bg-dot-col: black;
 
-  --bg-accent-col1: blue;
-  --bg-accent-col2: rgb(255, 30, 68);
+  --grad-col-1-alt: rgb(29, 29, 29);
+  --grad-col-2-alt: rgb(44, 44, 44);
+
+  @property --grad-col-1{
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgb(44, 44, 44);
+  }
+
+  @property --grad-col-2{
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgb(29, 29, 29);  
+  }
 
   /* Spacing & Misc. Vars */
   --row1-height: 3.3rem;
@@ -39,23 +51,44 @@
   font-size: 15px;
 }
 
-/* @media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --background: rgb(34, 34, 34);
-    --highlight: rgb(49, 49, 49);
-    --foreground: black;
-    --mainText: white;
-    --locationBgColor: rgba(34, 34, 34, 80%);
+    --background: rgb(255, 255, 255);
+    --foreground: rgb(228, 228, 228);
+    --highlight: rgb(202, 202, 202);
+    --mainText: rgb(0, 0, 0);
 
-    --filterHighlight: gray;
-    --filterItemBg: #303030;
-    --filterItemHighlight: #3d3d3d;
+    --locationBgColor: rgba(255, 255, 255, 0.8);
+
+    --filterHighlight: rgb(182, 182, 182);
+    --filterItemBg: #ffffff;
+    --filterItemHighlight: #d6d6d6;
+
+    --dropshadow-color: black;
+    --bg-dot-col: rgb(255, 255, 255);
+
+    --grad-col-1-alt: rgb(211, 211, 211);
+    --grad-col-2-alt: white;
+
+    @property --grad-col-1{
+      syntax: "<color>";
+      inherits: true;
+      initial-value: white;
+    }
+
+    @property --grad-col-2{
+      syntax: "<color>";
+      inherits: true;
+      initial-value: rgb(211, 211, 211);  
+    }
   }
-} */
+}
 
 .siteCont{
   height: max-content;
   width: 100vw;
+  min-width: 1080px;
+  background-color: var(--background);
 }
 
 .mainContainer{
@@ -173,7 +206,7 @@
   min-height: var(--row2-min-height);
 
   background: linear-gradient(45deg, var(--bg-grad-col-1), var(--bg-grad-col-2));
-  animation: changingGrad 10s ease-in-out infinite;
+  animation: changingGrad 15s ease-in-out infinite;
 }
 
 @property --bg-grad-col-1{
@@ -189,9 +222,13 @@
 }
 
 @keyframes changingGrad{
-  50%{
+  34%{
     --bg-grad-col-1: purple;
     --bg-grad-col-2: yellow;
+  }
+  66%{
+    --bg-grad-col-1: rgb(255, 0, 212);
+    --bg-grad-col-2: rgb(0, 255, 213);
   }
   100%{
     --bg-grad-col-1: blue;
@@ -211,6 +248,8 @@
   flex-flow: row nowrap;
   justify-content: space-evenly;
   align-items: center;
+
+  overflow: hidden;
 }
  
 .bgRadContainer, .bgRadSubContainer, .locationInfoSubContainer{
@@ -280,25 +319,15 @@
 }
 
 .bgRadSubContainer:hover{
-  --grad-col-2: rgb(44, 44, 44);
-  --grad-col-1: rgb(29, 29, 29);
-}
-
-@property --grad-col-1{
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(44, 44, 44);
-}
-
-@property --grad-col-2{
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgb(29, 29, 29);  
+  --grad-col-2: var(--grad-col-2-alt);
+  --grad-col-1: var(--grad-col-1-alt);
 }
 
 .bgRadSubContainer:has(> .bgRadContainer:hover){
   width: 92%; 
   height: 82%;
+  --grad-col-2: var(--grad-col-2-alt);
+  --grad-col-1: var(--grad-col-1-alt);
 }
 
 .radFig:has(> .bgRadContainer:hover){
@@ -461,11 +490,22 @@
   ;
 }
 
-#map {
+.map, .mapLoading {
   height: 80%;
   width: 40%;
-  z-index: 5;
-  border: 1px solid black;
+  border-radius: var(--radius-2xl);
+  filter: drop-shadow(0 0 0.75rem var(--dropshadow-color));
+}
+
+.mapLoading{
+  color: var(--mainText);
+  background-color: var(--background);
+
+  border: 1px solid var(--background);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 
@@ -486,6 +526,10 @@
     --total-min-height: 60rem;
 
     font-size: 12px;
+  }
+
+  .map, .mapLoading{
+    display: none;
   }
 
   .bgRadSubContainer:has(> .bgRadContainer:hover){

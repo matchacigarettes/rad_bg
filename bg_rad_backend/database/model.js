@@ -20,7 +20,9 @@ const getLocationByID = async (id) => {
         result.country, 
         result.subNational,
         result.radFig,
-        result.radUnit
+        result.radUnit,
+        result.latitude,
+        result.longitude
       );
     } else{
       return {error: `No object with id:'${id}' found`};
@@ -43,7 +45,9 @@ const getLocationsBySubString = async (subString) => {
       item.country,
       item.subNational,
       item.radFig,
-      item.radUnit
+      item.radUnit,
+      item.latitude,
+      item.longitude
     ));
   }).catch(console.error);
 }
