@@ -8,7 +8,7 @@ function CenterMap({pos, scale}:{[key:string]:any}){
     const map = useMap();
     if(map.getSize().x > 1){
         const map = useMap();
-        map.flyTo(pos, scale, {duration: 1});
+        map.setView(pos, scale)
     }
     return<></>
 }

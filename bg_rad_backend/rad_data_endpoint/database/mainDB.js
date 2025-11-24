@@ -19,14 +19,15 @@ const client = new MongoClient(uri, {
 /**
  * Performs the db.find command on database using query specified
  * @param {Object} query mongoDB query used to find items
+ * @param {number} itemLimit max number of items to return
  * @returns array of items found
  */
-async function dbItemFind(query){
+async function dbItemFind(query, itemLimit){
   try {
     await client.connect();
     const dbCol = await client.db(dbName).collection(colName);
 
-    const cursor = await dbCol.find(query).limit(10);
+    const cursor = await dbCol.find(query).limit(itemLimit);
     return await cursor.toArray();
 
   } catch(err){
@@ -54,7 +55,7 @@ const selectItemsBySubString = async (subString) => {
     ]
   };
 
-  return await dbItemFind(query);
+  return await dbItemFind(query, 10);
 }
 
 /**
@@ -64,13 +65,25 @@ const selectItemsBySubString = async (subString) => {
  */
 const selectItemById = async (id) => {
   const query = {_id: new ObjectId(id)};
-  return await dbItemFind(query);
+  return await dbItemFind(query, 10);
+}
+
+/**
+ * Selects all items from DB with country name specified
+ * @param {string} countryName name of country as string
+ * @returns {Object} object containing all items returned by selection
+ */
+const selectItemByCountry = async (countryName) => {
+  const query = {country: countryName};
+  return await dbItemFind(query, 15);
 }
 
 module.exports = {
   selectItemById,
   selectItemsBySubString,
-  closeDbConnection
+  closeDbConnection,
+  selectItemByCountry
 };
+
 
 

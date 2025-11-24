@@ -1,6 +1,7 @@
 // handles logic and database functions based on input provided by controller, sends result to controller
 const dbMethods = require("./mainDB.js");
-const Location = require("../tools/location.js")
+const Location = require("../../tools/location.js")
+const ipLocMethods = require('./ipStackRequest');
 
 
 /**
@@ -52,8 +53,49 @@ const getLocationsBySubString = async (subString) => {
   }).catch(console.error);
 }
 
+/**
+ * Retrives the closes location to the IP address specified thats in the same country as said IP address
+ * @param {string} ip IP address
+ * @returns {Object} result object of function
+ */
+const getLocationByIp = async (ip) => {
+  const ipReturn = await ipLocMethods.fetchUserLocation(ip);
+
+  if(ipReturn.length == 3){
+    const dbReturn = await dbMethods.selectItemByCountry(ipReturn[2]); 
+    
+    let minValue = 999999;
+    let minObj;
+
+    for(const item of dbReturn){
+      let totalDif = ipLocMethods.getTotalCoordDif([ipReturn[0], ipReturn[1]], [item.latitude, item.longitude]);
+      if(totalDif < minValue){
+        minValue = totalDif;
+        minObj = item;
+      }
+    }
+
+    return new Location(
+      minObj._id.toString(),
+      minObj.name,
+      minObj.country,
+      minObj.subNational,
+      minObj.radFig,
+      minObj.radUnit,
+      minObj.latitude,
+      minObj.longitude
+    );
+
+  } else{
+    return {error: "no records in user country."};
+  }
+}
+
 module.exports = {
   getLocationByID,
-  getLocationsBySubString
+  getLocationsBySubString,
+  getLocationByIp
 };
+
+
 

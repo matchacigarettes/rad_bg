@@ -1,4 +1,5 @@
 import { LocationRecord } from "./locationRecord";
+import { UserLocation } from "./user_location";
 
 export class DataApi{
   private constructor(){
@@ -15,6 +16,7 @@ export class DataApi{
   
   private static byIdEndpoint = "get/byID/";
   private static byFilterEndpoint = "get/byFilter/";
+  private static byIpEndpoint = "get/byIP/";
 
   static loadingLocationObj = new LocationRecord("-1", "Loading", "unknown", "unknown", 0, "", this.defLat, this.deflong);
   private static errorLocationObj = new LocationRecord("-1", "Error", "not found", "record", 0, "", this.defLat, this.deflong);
@@ -51,6 +53,21 @@ export class DataApi{
         ? [result] 
         : [this.errorLocationObj]
       ;
+    }
+  }
+
+  static requestRecordByIp = async () => {
+    const ip = await UserLocation.fetchUserIp();
+    const result = await this.apiFetch(this.url, this.byIpEndpoint, ip);
+
+    if(result === undefined){
+      await this.requestRecordById(this.defaultID);
+    } else{
+      if(result.hasOwnProperty("id")){
+        this.apiRequestResult = [result];
+      } else{
+        await this.requestRecordById(this.defaultID);
+      }
     }
   }
 

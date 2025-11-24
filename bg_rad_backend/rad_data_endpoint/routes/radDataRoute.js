@@ -39,4 +39,28 @@ router.get("/get/byFilter/:filter", async (req, res) => {
     }
 });
 
+
+router.get("/get/byIP/:ip", async (req, res) => {
+    const ip = req.params.ip;
+    const ip_regex_ptn = /^\d{1,3}(\.\d{1,3}){3}$/;
+
+    res.set('Content-Type', 'application/json');
+    
+    if(ip_regex_ptn.test(ip)){
+        await dbFunctions.getLocationByIp(ip)
+            .then(result => {
+                if(result.hasOwnProperty('error')){
+                    res.status(404).json(result);
+                } else{
+                    res.status(200).json(result);
+                }
+            })
+            .catch(err => {
+                res.status(404).json({error:'an error occured'});
+            });
+    } else {
+        res.status(404).json({error:'param provided is not valid ip address'});
+    }
+})
+
 module.exports = router;

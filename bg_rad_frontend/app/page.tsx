@@ -7,11 +7,18 @@ import dynamic from "next/dynamic";
 // --- React Componenets ---
 
 export default function MainContainer() {
-  
+
   let [ selectedRecord, setSelectedRecord ] = useState(DataApi.loadingLocationObj);
   let [ filterShown, setFilterShown ] = useState(0);
-
-  useEffect(() => {DataApi.requestDefaultRecord().then(() => setSelectedRecord(DataApi.apiRequestResult[0]))}, []);
+  
+  useEffect(() => {
+    DataApi.requestRecordByIp()
+      .then(() => setSelectedRecord(DataApi.apiRequestResult[0]))
+      .catch(err => {
+        DataApi.requestDefaultRecord()
+          .then(() => setSelectedRecord(DataApi.apiRequestResult[0]))
+      })
+  }, []);
 
   return(
     <div className="siteCont">
@@ -28,6 +35,13 @@ export default function MainContainer() {
       </main>
     </div>
   ); 
+}
+
+function infoPannel(){
+  return(
+    <div>
+    </div>
+  );
 }
 
 function FilterContainer({ setSelectedRecord, filterShown, setFilterShown }:{[key:string]:any}){

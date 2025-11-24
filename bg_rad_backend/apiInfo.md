@@ -8,6 +8,7 @@ Used to request/transmit data spcifiying the background radiation of various loc
 #### API Endpoins
 - _api_url_/radData/get/byID/:id
 - _api_url_/radData/get/byFilter/:filter
+- _api_url_/radData/get/byIP/:ip
 
 
 ## _api_url_/radData/get/byFilter/:filter
@@ -72,5 +73,34 @@ If a valid call is made to the endpoint, the JSON object will contain all feilds
 ```
 
 _Invalid Call / Error_ <br/>
-If an invalid call is made or an error is encountered, the JSON response object will contain a property named `error` assigned a string providing more information as to why the error occured (ie, `{"error": "No object with id found"}`).
+If an invalid call is made or an error is encountered, the JSON response object will contain a property named `error` assigned a string providing more information as to why the error occured (ie, `{"error": "string provided is not a valid IP address"}`).
+
+## _api_url_/radData/get/byIP/:ip
+Used to select the record in the database with the closest latitude and longitude to that of the IP address provided, only records with the same country name as that of the IP address will be returned
+
+#### :ip
+- IP provided must be a valid IP address
+- IP provided must have a record in the same country as the IP address 
+
+
+#### Endpoint Output 
+This endpoint will always return a JSON object as a response, along with the appropriate error code for said response. The content of said JSON depends on whether the call made to the end point was valid or not. <br/>
+
+_Valid Call_ <br/> 
+If a valid call is made to the endpoint, the JSON object will contain all feilds of the record with the closest latitude & longitude to that of the IP address provided, with the keys for each feild being as follows:
+```
+{
+  "id": "692108cc3ddc29e8f6004b53",
+  "name": "Sydney",
+  "country": "Australia",
+  "subNational": "New South Wales",
+  "bgRad": 300,
+  "radUnit": "uSv",
+  "latitude": -33.8687530844104,
+  "longitude": 151.196779661934
+}
+```
+
+_Invalid Call / Error_ <br/>
+If no record exists with in the same country as the IP provided, an invalid call is made, or an error is encountered, the JSON response object will contain a property named `error` assigned a string providing more information as to why the error occured (ie, `{"error": "string provided is not a valid IP address"}`).
 
