@@ -11,7 +11,7 @@ export class DataApi{
   private static defLat = -25.034912926102326;
   private static deflong = 134.27791178447652;
 
-  private static url = "http://192.168.1.109:8000/radData/";
+  private static url = "http://localhost:8000/radData/";
   private static defaultID = '692108cc3ddc29e8f6004b54';
   
   private static byIdEndpoint = "get/byID/";
