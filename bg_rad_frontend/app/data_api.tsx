@@ -1,5 +1,6 @@
+import { resume } from "react-dom/server";
 import { LocationRecord } from "./locationRecord";
-import { UserLocation } from "./user_location";
+import { UserIp } from "./user_ip";
 
 export class DataApi{
   private constructor(){
@@ -30,61 +31,74 @@ export class DataApi{
    */
   private static apiFetch = async (url:string, endpoint:string, parameters:string) => {
     try{
-      const resp = await fetch(`${url}${endpoint}${parameters}`);
+      const resp = await fetch(`${url}${endpoint}${parameters}`) ?? {ok: false};
       
-      if(!resp.ok){
-        throw new Error(`Response status: ${resp.status}`)
+      if(!resp || !resp.ok){
+        return this.errorLocationObj;
+      } else{
+        return resp.json();
       }
 
-      return resp.json();
-
     } catch(error){
-      console.log("API Fetch error has occured.");
+      console.log(error);
     }
   }
 
   static requestRecordById = async (id:string) => {
-    const result = await this.apiFetch(this.url, this.byIdEndpoint, id);
+    try{
+      const result = await this.apiFetch(this.url, this.byIdEndpoint, id) ?? this.errorLocationObj;
     
-    if(result === undefined){
-      this.apiRequestResult = [this.errorLocationObj];
-    } else{
-      this.apiRequestResult = (result.hasOwnProperty("id")) 
-        ? [result] 
-        : [this.errorLocationObj]
-      ;
+      if(!result){
+        this.apiRequestResult = [this.errorLocationObj];
+      } else{
+        this.apiRequestResult = [result];
+      }
+
+    } catch(error){
+      console.log(error);
     }
   }
 
   static requestRecordByIp = async () => {
-    const ip = await UserLocation.fetchUserIp();
-    const result = await this.apiFetch(this.url, this.byIpEndpoint, ip);
-
-    if(result === undefined){
-      await this.requestRecordById(this.defaultID);
-    } else{
-      if(result.hasOwnProperty("id")){
-        this.apiRequestResult = [result];
-      } else{
-        await this.requestRecordById(this.defaultID);
+    try{
+      const ip = await UserIp.fetchUserIp() ?? "0";
+      if(!ip || ip == "0"){
+        this.apiRequestResult = [this.errorLocationObj];
+        return;
       }
+
+      const result = await this.apiFetch(this.url, this.byIpEndpoint, ip) ?? this.errorLocationObj;
+      if(!result || result.id == "-1"){
+        await this.requestDefaultRecord();
+      } else{
+        this.apiRequestResult = [result];
+      }
+
+    } catch(error){
+      console.log(error);
     }
   }
 
   static requestDefaultRecord = async () => {
-    await this.requestRecordById(this.defaultID);
+    try{
+      await this.requestRecordById(this.defaultID);
+    } catch(error){
+      console.log(error);
+    }
   }
 
   static requestRecordsByFilter = async (filter:string) => {
-    const result = await this.apiFetch(this.url, this.byFilterEndpoint, filter);
-    
-    if(result === undefined){
-      this.apiRequestResult = new Array();
-    } else {
-      this.apiRequestResult = (result.hasOwnProperty("selectedLocations")) 
-        ? result.selectedLocations 
-        : new Array()
-      ;
+    try{
+      const result = await this.apiFetch(this.url, this.byFilterEndpoint, filter) ?? {selectedLocations: []};
+      if(!result){
+        this.apiRequestResult = new Array();
+      } else{
+        this.apiRequestResult = result.selectedLocations; 
+      }
+    } catch(error){
+      console.log(error);
     }
   }
 }
+
+ 

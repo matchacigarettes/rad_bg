@@ -284,10 +284,10 @@ const createMap = (latitude:number, longitude:number) => {
 const setHtmlDataAtr = (boolValue:boolean) => {
   const htmlTag = document.getElementById("htmlTag");
 
-  if(htmlTag != null){
-    htmlTag.dataset.dkset = (boolValue).toString();
-  } else{
+  if(!htmlTag){
     console.log("Error: html tag is null")
+  } else{
+    htmlTag.dataset.dkset = (boolValue).toString();
   }
 }
 
