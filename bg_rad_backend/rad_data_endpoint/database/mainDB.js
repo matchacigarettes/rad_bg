@@ -26,6 +26,14 @@ class mongoDbApi{
     longitude: this.#deflng
   };
 
+  static #client = new MongoClient(this.#uri, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    }
+  });
+
 
   /**
    * Performs the db.find command on database using query specified
@@ -34,30 +42,25 @@ class mongoDbApi{
    * @returns array of items found
    */
   static dbItemFind = async (query, itemLimit) => {
-    try {
-      const client = new MongoClient(this.#uri, {
-        serverApi: {
-          version: ServerApiVersion.v1,
-          strict: true,
-          deprecationErrors: true,
-        }
-      });
+    const uri = `mongodb+srv://mainUser:${process.env.DB_PASS}@raddatacluster.wnxk9ca.mongodb.net/?appName=radDataCluster`;
     
-      await client.connect();
-      const dbCol = client.db(this.#dbName).collection(this.#colName);
+    try {
+      await this.#client.connect();
+      const dbCol = this.#client.db(this.#dbName).collection(this.#colName);
       const cursor = dbCol.find(query).limit(itemLimit);
       
       const result = await cursor.toArray() ?? [this.errorObj];
       if(!result){
         return [this.errorObj];
       } else{
-        await client.close();
         return result;
       }
     
     } catch(error){
       console.error(error);
     }
+
+    // await this.#client.close();
   }
 
 
@@ -134,6 +137,4 @@ class mongoDbApi{
 }
 
 module.exports = mongoDbApi;
-
-
 

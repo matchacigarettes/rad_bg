@@ -9,33 +9,43 @@ router.get("/get/byID/:id", async (req, res) => {
     res.set('Content-Type', 'application/json');
     res.set('Cache-Control', 'no-cache')
     
-    await dbFunctions.getLocationByID(locationId)
-        .then(result => {
-            if(result.hasOwnProperty("error")){
-                res.status(404).json(result);
-            }else{
-                res.status(200).json(result);
-            }
-        })
-        .catch(err => {
-            res.status(404).json({error:'an error occured'});
-        });
+    try{
+        const result = await dbFunctions.getLocationByID(locationId) ?? dbFunctions.errorLocationObj; 
+        if(!result){
+            res.json(dbFunctions.errorLocationObj);
+            return;
+        } else{
+            res.json(result);
+            return;
+        }
+
+    } catch(error){
+        res.json(dbFunctions.errorLocationObj);
+    }
 });
 
 router.get("/get/byFilter/:filter", async (req, res) => { 
     const filter = req.params.filter;
+    res.set('Content-Type', 'application/json');
     
     if(filter.trim() == 0){
-        res.status(404).json({error: `/get/byFilter/:'${filter}' must contain text characters`});
-    } else{
-        res.set('Content-Type', 'application/json');
-        await dbFunctions.getLocationsBySubString(filter)
-            .then(result => {
-                res.json({selectedLocations: result});
-            })
-            .catch(err => {
-                res.status(404).json({error:'an error occured'});
-            })
+        res.json(dbFunctions.errorLocationObj);
+        return;
+    } 
+
+    try{
+        const result = await dbFunctions.getLocationsBySubString(filter) ?? [dbFunctions.errorLocationObj];
+
+        if(!result){
+            res.json({selectedLocations: [dbFunctions.errorLocationObj]});
+            return;
+        } else{
+            res.json({selectedLocations: result});
+            return;
+        }
+
+    } catch(error){
+        res.json({selectedLocations: [dbFunctions.errorLocationObj]});
     }
 });
 
@@ -43,24 +53,28 @@ router.get("/get/byFilter/:filter", async (req, res) => {
 router.get("/get/byIP/:ip", async (req, res) => {
     const ip = req.params.ip;
     const ip_regex_ptn = /^\d{1,3}(\.\d{1,3}){3}$/;
-
     res.set('Content-Type', 'application/json');
-    
-    if(ip_regex_ptn.test(ip)){
-        await dbFunctions.getLocationByIp(ip)
-            .then(result => {
-                if(result.hasOwnProperty('error')){
-                    res.status(404).json(result);
-                } else{
-                    res.status(200).json(result);
-                }
-            })
-            .catch(err => {
-                res.status(404).json({error:'an error occured'});
-            });
-    } else {
-        res.status(404).json({error:'param provided is not valid ip address'});
+
+    if(!(ip_regex_ptn.test(ip))){
+        res.json(dbFunctions.errorLocationObj);
+        return;
     }
+
+    try{
+        const result = await dbFunctions.getLocationByIp(ip) ?? dbFunctions.errorLocationObj; 
+        if(!result){
+            res.json(dbFunctions.errorLocationObj);
+            return;
+        } else{
+            res.json(result);
+            return;
+        }
+    } catch(error){
+        res.json(dbFunctions.errorLocationObj);
+        return;
+    }
+    
+    
 })
 
 module.exports = router;

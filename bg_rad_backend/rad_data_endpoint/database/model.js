@@ -127,7 +127,8 @@ const getLocationByIp = async (ip) => {
 module.exports = {
   getLocationByID,
   getLocationsBySubString,
-  getLocationByIp
+  getLocationByIp,
+  errorLocationObj
 };
 
 
