@@ -22,7 +22,7 @@ const errorLocationObj = new Location(
  */
 const getLocationByID = async (id) => {
   try{
-    const result = await dbMethods.selectItemById(id) ?? [dbMethods.errorObj];
+    let result = await dbMethods.selectItemById(id) ?? [dbMethods.errorObj];
     if(!result){
       return errorLocationObj;
     }

@@ -44,16 +44,17 @@ class mongoDbApi{
       
       const result = await cursor.toArray() ?? [this.errorObj];
       if(!result){
+        await this.#client.close();
         return [this.errorObj];
       } else{
+        await this.#client.close();
         return result;
       }
     
     } catch(error){
+      await this.#client.close();
       console.error(error);
     }
-
-    // await this.#client.close();
   }
 
 
