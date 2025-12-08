@@ -107,8 +107,6 @@ const getLocationByIp = async (ip) => {
         }
       }
 
-      console.log(`minObj: ${minObj}`);
-
       return new Location(
         minObj._id.toString(),
         minObj.name,

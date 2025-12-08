@@ -42,7 +42,7 @@ class ipStackApi{
      * @param {[latitude:number, longitude:number]} latlng2 second set of coordinates
      * @returns {number} total difference between coordinate pairs provided
      */
-    static getTotalCoordDif = async (latlng1, latlng2) => {
+    static getTotalCoordDif = (latlng1, latlng2) => {
         const latDif = Math.abs((Math.abs(latlng1[0]) - Math.abs(latlng2[0])));
         const lngDif = Math.abs((Math.abs(latlng1[1]) - Math.abs(latlng2[1])));
         return latDif + lngDif;
